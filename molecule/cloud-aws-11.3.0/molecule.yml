@@ -12,14 +12,14 @@ lint:
 platforms:
   - name: test-aws-centos7-endeca-cas
     image: CentOS7_64-bit
-    shape: small
+    shape: medium
     region: AWS-EUCENTRAL
     wait_timeout: 1800
     groups:
       - rhel_family
   - name: test-aws-centos6-endeca-cas
     image: CentOS6_64-bit
-    shape: small
+    shape: medium
     region: AWS-EUCENTRAL
     wait_timeout: 1800
     groups:
