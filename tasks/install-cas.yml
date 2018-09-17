@@ -1,0 +1,125 @@
+---
+- name: "Read ToolsAndFrameworks path"
+  stat:
+    path: "{{ tf_path }}"
+  register: tf_dir
+  become: True
+
+- name: "Get endeca user"
+  set_fact:
+    endeca_user: "{{ tf_dir.stat.pw_name }}"
+    endeca_group: "{{ tf_dir.stat.gr_name }}"
+
+- name: "Become section"
+  block:
+    - name: "Install requirements"
+      package:
+        name: "{{ package }}"
+        state: "present"
+      loop: "{{ requirements }}"
+      loop_control:
+        loop_var: package
+
+    - name: "Extract CAS installer"
+      unarchive:
+        src: "{{ cas_artifact }}"
+        dest: "{{ download_path }}"
+        list_files: True
+      register: cas_installer
+
+    - name: "Ensure {{ cas_installer.files[0] }} is executable"
+      file:
+      args:
+        path: "{{ download_path }}/{{ cas_installer.files[0] }}"
+        mode: "0755"
+
+  become: True
+
+- name: "Set cas_installer_bin"
+  set_fact:
+    cas_installer_bin: "{{ download_path }}/{{ cas_installer.files[0] }}"
+
+- name: "Create silent install file"
+  template:
+    src: "cas_installer.properties.j2"
+    dest: "{{ download_path }}/cas_installer_{{ cas_version }}.properties"
+
+- name: "Register silent install file"
+  set_fact:
+    cas_silent_prop: "{{ download_path }}/cas_installer_{{ cas_version }}.properties"
+
+- name: "Install CAS {{ cas_version }}"
+  command: "{{ cas_installer_bin }} --silent --target {{ base_root }} < {{ cas_silent_prop }}"
+  environment:
+    ENDECA_TOOLS_ROOT: "{{ tf_path }}"
+    ENDECA_TOOLS_CONF: "{{ tf_path }}/server/workspace"
+  become: True
+  notify: "Restart ToolsAndFrameworks"
+  when: |
+    cas_version.split('.')[0] | int <= 3 or
+    ( cas_version.split('.')[0] | int == 11 and cas_version.split('.')[1] | int <= 1 )
+
+- name: "Install CAS {{ cas_version }}"
+  command: "{{ cas_installer_bin }} -i silent -f {{ cas_silent_prop }}"
+  become: True
+  notify: "Restart ToolsAndFrameworks"
+  when: |
+    cas_version.split('.')[0] | int >= 11 and
+    ( cas_version.split('.')[0] | int == 11 and cas_version.split('.')[1] | int >= 2 )
+
+- name: "Chown endeca directory to {{ endeca_user }}"
+  file:
+    owner: "{{ endeca_user }}"
+    group: "{{ endeca_group }}"
+    path: "{{ base_root }}/endeca"
+    state: "directory"
+    mode: "0775"
+    recurse: True
+  become: True
+
+- name: "Create service section"
+  block:
+
+    - name: "Create endeca pid directory"
+      file:
+        path: "{{ pid_dir }}"
+        owner: "{{ endeca_user }}"
+        group: "{{ endeca_group }}"
+        state: "directory"
+
+    - name: "Create CAS service in init.d"
+      template:
+        src: "cas_service.j2"
+        dest: "/etc/init.d/{{ cas_service }}"
+        mode: "0755"
+      when: ansible_facts.service_mgr in ("upstart", "sysvinit" )
+
+    - name: "Create CAS service in systemd"
+      template:
+        src: "cas_service.j2"
+        dest: "/etc/systemd/system/{{ cas_service }}.service"
+        mode: "0755"
+      when: ansible_facts.service_mgr == "systemd"
+
+    - name: "Systemd daemon-reload"
+      systemd:
+        daemon_reload: True
+      when: ansible_facts.service_mgr == "systemd"
+
+    - name: "Start CAS"
+      service:
+        name: "{{ cas_service }}"
+        enabled: True
+        state: "started"
+
+  become: True
+
+- name: "Check that CAS Service is up and running"
+  uri:
+    url: "http://{{ cas_domain }}:{{ cas_port }}/cas/?wsdl"
+    method: "GET"
+    return_content: True
+  register: cas_host
+  until: cas_host.status == 200
+  retries: "10"
+  delay: "5"
