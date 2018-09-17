@@ -14,6 +14,9 @@ transport: "local"
 transport_local: "/tmp/V861198-01.zip"
 transport_web: "http://my-storage.example.com/V861198-01.zip"
 
+# path to download ToolsAndFrameworks
+download_path: "/tmp"
+
 cas_port: "8500"
 cas_shutdown_port: "8506"
 cas_domain: "{{ ansible_fqdn }}"
