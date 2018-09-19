@@ -10,28 +10,28 @@ before_script:
 variables:
   GET_SOURCES_ATTEMPTS: "5"
 
-AWS endeca-cas 11.3.0:
-  variables:
-    EPC_REGION: AWS-EUCENTRAL
-  stage: deployment test
-  script:
-    - molecule test -s cloud-aws-11.3.0
-  tags:
-    - delegated
+# AWS endeca-cas 11.3.0:
+  # variables:
+    # EPC_REGION: AWS-EUCENTRAL
+  # stage: deployment test
+  # script:
+    # - molecule test -s cloud-aws-11.3.0
+  # tags:
+    # - delegated
 
-EPC endeca-cas 11.3.0:
-  variables:
-    EPC_REGION: EPAM-BY2
-  stage: deployment test
-  script:
-    - molecule test -s cloud-epc-11.3.0
-  tags:
-    - delegated
+# EPC endeca-cas 11.3.0:
+  # variables:
+    # EPC_REGION: EPAM-BY2
+  # stage: deployment test
+  # script:
+    # - molecule test -s cloud-epc-11.3.0
+  # tags:
+    # - delegated
 
 Docker endeca-cas 11.x:
   stage: deployment test
   script:
-    - molecule test -s docker-11.3.0-centos-7
+    - molecule test --debug -s docker-11.3.0-centos-7
     - molecule test -s docker-11.3.0-centos-6
     - molecule test -s docker-11.2.0-centos-7
     - molecule test -s docker-11.2.0-centos-6
@@ -39,16 +39,16 @@ Docker endeca-cas 11.x:
   tags:
     - docker
 
-Docker endeca-cas 3.0.2:
-  stage: deployment test
-  script:
-    - molecule test -s docker-3.0.2
-  tags:
-    - docker
+# Docker endeca-cas 3.0.2:
+  # stage: deployment test
+  # script:
+    # - molecule test -s docker-3.0.2
+  # tags:
+    # - docker
 
-Docker endeca-cas 3.1.2.1:
-  stage: deployment test
-  script:
-    - molecule test -s docker-3.1.2.1
-  tags:
-    - docker
+# Docker endeca-cas 3.1.2.1:
+  # stage: deployment test
+  # script:
+    # - molecule test -s docker-3.1.2.1
+  # tags:
+    # - docker
