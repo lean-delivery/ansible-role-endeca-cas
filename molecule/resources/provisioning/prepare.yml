@@ -22,13 +22,15 @@
       become: True
       changed_when: False
 
-    - name: Workaround for AWS facts
+    - name: Gathering AWS facts
       ec2_metadata_facts:
+      ignore_errors: yes
 
     - name: Gather facts
       setup:
 
-    - block:
+    - name: Workaround for AWS
+      block:
         - name: Install modules
           package:
             name: "{{ item }}"
@@ -62,5 +64,5 @@
               vars:
                 public_hostname: "{{ ansible_ec2_public_hostname }}"
           when: extend_partition is changed
-      become: true
+      become: True
       when: ansible_distribution_major_version == '6' and ansible_ec2_instance_type is defined
