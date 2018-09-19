@@ -1,6 +1,8 @@
 ---
-
 cas_version: "11.3.0"
+
+# path to install CAS
+base_root: "/opt"
 
 # name of the service
 cas_service: "endeca-cas"
