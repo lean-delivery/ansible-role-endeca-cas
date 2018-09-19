@@ -31,7 +31,7 @@ variables:
 Docker endeca-cas 11.x:
   stage: deployment test
   script:
-    - molecule test --debug -s docker-11.3.0-centos-7
+    - molecule --debug test -s docker-11.3.0-centos-7
     - molecule test -s docker-11.3.0-centos-6
     - molecule test -s docker-11.2.0-centos-7
     - molecule test -s docker-11.2.0-centos-6
