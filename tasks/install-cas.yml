@@ -113,13 +113,3 @@
         state: "started"
 
   become: True
-
-- name: "Check that CAS Service is up and running"
-  uri:
-    url: "http://{{ cas_domain }}:{{ cas_port }}/cas/?wsdl"
-    method: "GET"
-    return_content: True
-  register: cas_host
-  until: cas_host.status == 200
-  retries: "20"
-  delay: "10"
