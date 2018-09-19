@@ -121,5 +121,5 @@
     return_content: True
   register: cas_host
   until: cas_host.status == 200
-  retries: "10"
-  delay: "5"
+  retries: "20"
+  delay: "10"
