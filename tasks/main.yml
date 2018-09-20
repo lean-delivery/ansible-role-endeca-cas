@@ -1,5 +1,5 @@
 ---
-# Since path base_root/endeca/CAS/{{ cas_version }} is created by installer,
+# since path base_root/endeca/CAS/{{ cas_version }} is created by installer,
 # it's enough to check only if path exists
 - name: "Check CAS installation"
   stat:

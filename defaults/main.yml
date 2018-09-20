@@ -16,7 +16,7 @@ transport: "local"
 transport_local: "/tmp/V861198-01.zip"
 transport_web: "http://my-storage.example.com/V861198-01.zip"
 
-# path to download ToolsAndFrameworks
+# path to download CAS
 download_path: "/tmp"
 
 cas_port: "8500"
