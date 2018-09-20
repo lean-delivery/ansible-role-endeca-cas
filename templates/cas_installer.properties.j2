@@ -1,0 +1,39 @@
+{% if cas_version.split('.')[0] | int >= 12 or ( cas_version.split('.')[0] | int == 11 and cas_version.split('.')[1] | int >= 2 ) %}
+#Choose Install Folder
+#---------------------
+USER_INSTALL_DIR={{ base_root }}
+
+#Choose Product Features
+#-----------------------
+CHOSEN_FEATURE_LIST={{ install_feature_list | join(',') }}
+CHOSEN_INSTALL_FEATURE_LIST={{ install_feature_list | join(',') }}
+CHOSEN_INSTALL_SET=Custom
+
+#Get User Input
+#--------------
+CASPORT={{ cas_port }}
+CASSTOPPORT={{ cas_shutdown_port }}
+{% if "CAS" not in install_feature_list %}
+CASHOST=\"{{ cas_domain }}\"
+{% endif %}
+
+#Get ENDECA_TOOLS_ROOT location
+#------------------------------
+ENDECA_TOOLS_ROOT={{ tf_path }}
+
+#Get ENDECA_TOOLS_CONF location
+#------------------------------
+ENDECA_TOOLS_CONF={{ tf_path }}/server/workspace
+
+#Install
+#-------
+-fileOverwrite_{{ cas_path }}/uninstall/CAS{{ cas_version }}_uninstall/Uninstall Oracle Commerce Content Acquisition System {{ cas_version }}.lax=Yes
+-fileOverwrite_{{ tf_path }}/server/workspace/conf/Standalone/localhost/casconsole.xml=Yes
+-fileOverwrite_{{ tf_path }}/server/webapps/casconsole-{{ cas_version }}-ssl.war=Yes
+-fileOverwrite_{{ tf_path }}/server/webapps/casconsole-{{ cas_version }}.war=Yes
+-fileOverwrite_{{ tf_path }}/server/workspace/conf/casconsole.properties=Yes
+{% else %}
+{{ cas_port }}
+{{ cas_shutdown_port }}
+{{ cas_domain }}
+{% endif %}

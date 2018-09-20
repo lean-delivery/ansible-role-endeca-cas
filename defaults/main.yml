@@ -1,0 +1,35 @@
+---
+cas_version: "11.3.0"
+
+# path to install CAS
+base_root: "/opt"
+
+# name of the service
+cas_service: "endeca-cas"
+
+# artifact source transport
+transport: "local"
+# available are:
+# - "web" Fetching artifact from custom web uri
+# - "local" Local artifact
+
+transport_local: "/tmp/V861198-01.zip"
+transport_web: "http://my-storage.example.com/V861198-01.zip"
+
+# path to download CAS
+download_path: "/tmp"
+
+cas_port: "8500"
+cas_shutdown_port: "8506"
+cas_domain: "{{ ansible_fqdn }}"
+
+# list of features for installing
+install_feature_list:
+  - "CAS"
+  - "Console"
+  - "DT"
+# avalable are:
+# - "CAS" - Content Acquisition System
+# - "Samples" - CAS Samples
+# - "Console" - CAS Console as a Workbench Extension
+# - "DT" - CAS Deployment Template Integration

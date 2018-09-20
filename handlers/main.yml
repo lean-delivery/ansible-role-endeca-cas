@@ -1,0 +1,7 @@
+---
+- name: "Restart ToolsAndFrameworks"
+  service:
+    name: "{{ tf_service }}"
+    enabled: True
+    state: "restarted"
+  become: True

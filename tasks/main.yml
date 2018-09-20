@@ -1,0 +1,22 @@
+---
+# since path base_root/endeca/CAS/{{ cas_version }} is created by installer,
+# it's enough to check only if path exists
+- name: "Check CAS installation"
+  stat:
+    path: "{{ cas_path }}"
+  register: cas_dir
+
+- name: "Install section"
+  block:
+    - name: "Fetch CAS artifact with {{ transport }} transport"
+      include_tasks: "{{ transport_driver }}"
+      with_first_found:
+        - "fetch/{{ transport }}.yml"
+        - "fetch/unknown-transport.yml"
+      loop_control:
+        loop_var: transport_driver
+
+    - name: "Install CAS {{ cas_version }}"
+      include_tasks: "install-cas.yml"
+
+  when: cas_dir.stat.exists == False
